@@ -1,0 +1,39 @@
+@import "../../App/variables"
+
+.header
+  display: grid
+  grid-template-columns: repeat(2, 1fr)
+  align-items: center
+  padding: 1rem 2rem
+
+  .nav
+    justify-self: end
+    &__list
+      display: grid
+      grid-template-columns: repeat(3, 1fr)
+      grid-column-gap: 20px
+      &-item
+        text-decoration: none
+        &_active
+          color: $green-blue
+
+
+  .logo
+    justify-self: start
+    &__img
+      width: 48px
+      height: 48px
+      object-fit: contain
+      animation-name: logo-animation
+      animation-iteration-count: infinite
+      animation-direction: normal
+      animation-play-state: running
+      animation-duration: 5s
+      animation-fill-mode: forwards
+      animation-timing-function: linear
+
+@keyframes logo-animation
+  from
+    transform: rotate(0)
+  to
+    transform: rotate(360deg)
