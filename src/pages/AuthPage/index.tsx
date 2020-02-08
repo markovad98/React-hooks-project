@@ -5,6 +5,7 @@ import { APP_PATHS } from '../../constants/routes';
 import { API_PATHS } from '../../constants/api';
 
 import useFetch from '../../hooks/useFetch';
+import useLocalStorage from '../../hooks/useLocalStorage';
 
 import './index.sass';
 
@@ -13,6 +14,7 @@ const AuthPage = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [isRedirect, setIsRedirect] = useState<boolean>(false);
+    const [token, setToken] = useLocalStorage('token');
 
     const { pathname } = useLocation();
     const isLogin = pathname === APP_PATHS.LOGIN;
@@ -31,7 +33,8 @@ const AuthPage = () => {
         if (!response) {
             return;
         }
-        localStorage.setItem('token', response.user.token);
+        setToken(response.user.token);
+        setIsRedirect(true);
     }, [response]);
 
     const handleRegisterOfAuth = () => {
