@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
 import { Link, useLocation, Redirect } from 'react-router-dom';
 import { APP_PATHS } from '../../constants/routes';
@@ -6,6 +6,8 @@ import { API_PATHS } from '../../constants/api';
 
 import useFetch from '../../hooks/useFetch';
 import useLocalStorage from '../../hooks/useLocalStorage';
+
+import { CurrentUserContext, IAuthUserInfo } from '../../contexts/currentUser';
 
 import './index.sass';
 
@@ -15,6 +17,7 @@ const AuthPage = () => {
     const [password, setPassword] = useState<string>('');
     const [isRedirect, setIsRedirect] = useState<boolean>(false);
     const [, setToken] = useLocalStorage('token');
+    const [currentUserState, setCurrentUserState] = useContext(CurrentUserContext);
 
     const { pathname } = useLocation();
     const isLogin = pathname === APP_PATHS.LOGIN;
@@ -35,6 +38,12 @@ const AuthPage = () => {
         }
         setToken(response.user.token);
         setIsRedirect(true);
+        setCurrentUserState((state: IAuthUserInfo) => ({
+            ...state,
+            isLoading: false,
+            isLoggedIn: true,
+            currentUser: response.user,
+        }))
     }, [response, setToken]);
 
     const handleRegisterOfAuth = () => {
