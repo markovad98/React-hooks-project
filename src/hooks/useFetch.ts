@@ -50,7 +50,7 @@ export default (url: string): TUseFetchResult => {
                 setError(err);
             })
 
-    }, [isLoading])
+    }, [isLoading, url, options])
 
     const doFetch = (option: IOptions = {}) => {
         setIsLoading(true);

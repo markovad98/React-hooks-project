@@ -7,7 +7,7 @@ export default (key: string, initialValue: any = ''): TUseLocalStorageResult => 
 
     useEffect(() => {
         localStorage.setItem(key, value)
-    }, [value])
+    }, [key, value])
 
     return [value, setValue];
 }

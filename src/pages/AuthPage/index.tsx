@@ -14,7 +14,7 @@ const AuthPage = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [isRedirect, setIsRedirect] = useState<boolean>(false);
-    const [token, setToken] = useLocalStorage('token');
+    const [, setToken] = useLocalStorage('token');
 
     const { pathname } = useLocation();
     const isLogin = pathname === APP_PATHS.LOGIN;
@@ -23,7 +23,7 @@ const AuthPage = () => {
     const linkText = isLogin ? 'Already have an account?' : 'Need an account?';
     const linkPath = isLogin ? APP_PATHS.REGISTER : APP_PATHS.LOGIN;
 
-    const [{ isLoading, response, error }, doFetch] = useFetch(
+    const [{ response }, doFetch] = useFetch(
         isLogin
             ? API_PATHS.DO_LOGIN
             : API_PATHS.DO_REGISTER
@@ -35,7 +35,7 @@ const AuthPage = () => {
         }
         setToken(response.user.token);
         setIsRedirect(true);
-    }, [response]);
+    }, [response, setToken]);
 
     const handleRegisterOfAuth = () => {
         doFetch({
