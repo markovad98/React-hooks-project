@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
-import { Link, useLocation } from 'react-router-dom';
-import { APP_PATHES } from '../../App';
+import { Link, useLocation, Redirect } from 'react-router-dom';
+import { APP_PATHS } from '../../constants/routes';
+import { API_PATHS } from '../../constants/api';
 
 import useFetch from '../../hooks/useFetch';
 
@@ -11,35 +12,56 @@ const AuthPage = () => {
     const [username, setUsername] = useState<string>('')
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [isRedirect, setIsRedirect] = useState<boolean>(false);
 
     const { pathname } = useLocation();
-    const isLogin = pathname === APP_PATHES.LOGIN;
-    const userData = isLogin ? { email, password } : { email, password, username };
+    const isLogin = pathname === APP_PATHS.LOGIN;
+    const user = isLogin ? { email, password } : { email, password, username };
+    const pageTitle =  isLogin ? 'Sign in' : 'Sign up';
+    const linkText = isLogin ? 'Already have an account?' : 'Need an account?';
+    const linkPath = isLogin ? APP_PATHS.REGISTER : APP_PATHS.LOGIN;
 
-    const [{ isLoading, response, error }, doFetch] = useFetch('users/login');
+    const [{ isLoading, response, error }, doFetch] = useFetch(
+        isLogin
+            ? API_PATHS.DO_LOGIN
+            : API_PATHS.DO_REGISTER
+    );
 
-    const handleSubmit = (e: React.SyntheticEvent) => {
-        e.preventDefault();
-    }
+    useEffect(() => {
+        if (!response) {
+            return;
+        }
+        localStorage.setItem('token', response.user.token);
+    }, [response]);
 
-    const handleAuth = () => {
+    const handleRegisterOfAuth = () => {
         doFetch({
             method: 'post',
-            data: userData,
+            data: {
+                user
+            },
         })
+    }
+
+    if (isRedirect) {
+        return <Redirect to={APP_PATHS.HOME} />
     }
 
     return (
         <section className="auth-section">
-            <form onSubmit={handleSubmit} action="" className="auth-section-form">
-                <Link to={APP_PATHES.REGISTER}>Need an account?</Link>
-                <input
-                    value={username}
-                    onChange={e => setUsername(e.target.value)}
-                    placeholder='Username'
-                    type="text"
-                    className="auth-section-form__input"
-                />
+            <h1>{ pageTitle }</h1>
+            <form onSubmit={e => e.preventDefault()} action="" className="auth-section-form">
+                <Link to={linkPath}>{ linkText }</Link>
+                {
+                    !isLogin &&
+                    <input
+                        value={username}
+                        onChange={e => setUsername(e.target.value)}
+                        placeholder='Username'
+                        type="text"
+                        className="auth-section-form__input"
+                    />
+                }
                 <input
                     value={email}
                     onChange={e => setEmail(e.target.value)}
@@ -51,15 +73,11 @@ const AuthPage = () => {
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     placeholder='Password'
-                    type="text"
+                    type="password"
                     className="auth-section-form__input" />
             </form>
-            <button onClick={handleAuth} className='auth-section-form__button'>
-                {
-                    pathname === APP_PATHES.LOGIN
-                        ? 'sign in'
-                        : 'sign up'
-                }
+            <button onClick={handleRegisterOfAuth} className='auth-section-form__button'>
+               { pageTitle }
             </button>
         </section>
     )

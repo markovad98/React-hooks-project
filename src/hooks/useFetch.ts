@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_PATHS } from '../constants/api';
 
 type Tmethod = 'get' | 'post' | 'put' | 'delete' | 'patch';
+
 type TPrimitive = number | string | boolean | null | undefined | symbol;
 
 interface IOptionParametr {
-    [key: string]: IOptionParametr;
+    [key: string]: IOptionParametr | TPrimitive;
 }
 
 interface IData {
@@ -26,8 +28,6 @@ type TUseFetchResult = [
     (options: IOptions) => void,
 ]
 
-export const baseUrl = 'https://conduit.productionready.io/api/';
-
 export default (url: string): TUseFetchResult => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [response, setResponse] = useState<any>(null);
@@ -38,7 +38,7 @@ export default (url: string): TUseFetchResult => {
         if (!isLoading) {
             return
         }
-        axios(`${baseUrl}${url}`, options)
+        axios(`${API_PATHS.BASE_URL}${url}`, options)
             .then(res => {
                 console.warn('SUCCESS: ', res);
                 setIsLoading(false);
