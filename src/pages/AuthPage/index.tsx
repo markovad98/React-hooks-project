@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 
+import BackendErrorMessages from '../../components/BackendErrorMessages';
+
 import { Link, useLocation, Redirect } from 'react-router-dom';
 import { APP_PATHS } from '../../constants/routes';
 import { API_PATHS } from '../../constants/api';
@@ -17,7 +19,7 @@ const AuthPage = () => {
     const [password, setPassword] = useState<string>('');
     const [isRedirect, setIsRedirect] = useState<boolean>(false);
     const [, setToken] = useLocalStorage('token');
-    const [currentUserState, setCurrentUserState] = useContext(CurrentUserContext);
+    const [, setCurrentUserState] = useContext(CurrentUserContext);
 
     const { pathname } = useLocation();
     const isLogin = pathname === APP_PATHS.LOGIN;
@@ -26,7 +28,7 @@ const AuthPage = () => {
     const linkText = isLogin ? 'Already have an account?' : 'Need an account?';
     const linkPath = isLogin ? APP_PATHS.REGISTER : APP_PATHS.LOGIN;
 
-    const [{ response }, doFetch] = useFetch(
+    const [{ response, error }, doFetch] = useFetch(
         isLogin
             ? API_PATHS.DO_LOGIN
             : API_PATHS.DO_REGISTER
@@ -44,7 +46,7 @@ const AuthPage = () => {
             isLoggedIn: true,
             currentUser: response.user,
         }))
-    }, [response, setToken]);
+    }, [response, setToken, setCurrentUserState]);
 
     const handleRegisterOfAuth = () => {
         doFetch({
@@ -63,6 +65,7 @@ const AuthPage = () => {
         <section className="auth-section">
             <h1>{ pageTitle }</h1>
             <form onSubmit={e => e.preventDefault()} action="" className="auth-section-form">
+                { error && <BackendErrorMessages backendErrors={error.errors} /> }
                 <Link to={linkPath}>{ linkText }</Link>
                 {
                     !isLogin &&

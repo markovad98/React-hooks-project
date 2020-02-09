@@ -19,11 +19,17 @@ interface IOptions {
     data?: IData;
 }
 
+interface IError {
+    errors: {
+        [key: string]: string[]
+    }
+}
+
 type TUseFetchResult = [
     {
         isLoading: boolean,
         response: any,
-        error: string
+        error: IError,
     },
     (options: IOptions) => void,
 ]
@@ -40,14 +46,14 @@ export default (url: string): TUseFetchResult => {
         }
         axios(`${API_PATHS.BASE_URL}${url}`, options)
             .then(res => {
-                console.warn('SUCCESS: ', res);
+                console.warn('SUCCESS IN THEN: ', res);
                 setIsLoading(false);
                 setResponse(res.data);
             })
             .catch(err => {
-                console.warn('ERROR: ', err);
+                console.warn('ERROR IN CATCH: ', err);
                 setIsLoading(false);
-                setError(err);
+                setError(err.response.data);
             })
 
     }, [isLoading, url, options])
