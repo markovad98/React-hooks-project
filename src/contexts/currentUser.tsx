@@ -1,4 +1,5 @@
-import React, { useState, createContext, Dispatch, SetStateAction } from 'react';
+import React, { useState, useEffect, createContext } from 'react';
+import useFetch from '../hooks/useFetch';
 
 export const CurrentUserContext = createContext({} as any,  (user: any): any => {} );
 
@@ -13,6 +14,8 @@ interface IProps {
 }
 
 export const CurrentUserProvider: React.FC<IProps> = ({ children }) => {
+    const [{ response }, doFetch] = useFetch('user');
+
     const [state, setState] = useState<IAuthUserInfo>({
         isLoading: false,
         isLoggedIn: null,

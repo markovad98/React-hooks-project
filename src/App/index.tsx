@@ -12,6 +12,7 @@ import AuthPage from '../pages/AuthPage'
 import useCounter from '../hooks/useCounter';
 
 import { CurrentUserProvider } from '../contexts/currentUser'
+import CurrentUserChecker from '../components/CurrentUserChecker'
 
 const App = () => {
     const [incA, decA, countA] = useCounter(10);
@@ -20,6 +21,7 @@ const App = () => {
     return (
         <div className='app'>
             <CurrentUserProvider>
+                <CurrentUserChecker>
                 <HashRouter>
                 <HeaderComponent />
                 <div className="counters">
@@ -34,6 +36,7 @@ const App = () => {
                         <Route path={APP_PATHS.ARTICLE} component={ArticlePage} />
                     </Switch>
                 </HashRouter>
+                </CurrentUserChecker>
             </CurrentUserProvider>
         </div>
     )

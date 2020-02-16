@@ -19,7 +19,7 @@ const AuthPage = () => {
     const [password, setPassword] = useState<string>('');
     const [isRedirect, setIsRedirect] = useState<boolean>(false);
     const [, setToken] = useLocalStorage('token');
-    const [, setCurrentUserState] = useContext(CurrentUserContext);
+    const [currentUserState, setCurrentUserState] = useContext(CurrentUserContext);
 
     const { pathname } = useLocation();
     const isLogin = pathname === APP_PATHS.LOGIN;
@@ -60,6 +60,8 @@ const AuthPage = () => {
     if (isRedirect) {
         return <Redirect to={APP_PATHS.HOME} />
     }
+
+    console.warn('currentUserState: ', currentUserState);
 
     return (
         <section className="auth-section">

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_PATHS } from '../constants/api';
+import useLocalStorage from './useLocalStorage';
 
 type Tmethod = 'get' | 'post' | 'put' | 'delete' | 'patch';
 
@@ -31,7 +32,7 @@ type TUseFetchResult = [
         response: any,
         error: IError,
     },
-    (options: IOptions) => void,
+    (options?: IOptions) => void,
 ]
 
 export default (url: string): TUseFetchResult => {
@@ -39,12 +40,19 @@ export default (url: string): TUseFetchResult => {
     const [response, setResponse] = useState<any>(null);
     const [error, setError] = useState<any>(null);
     const [options, setOptions] = useState<IOptions | object>({})
+    const [token] = useLocalStorage('token')
 
     useEffect(() => {
+        const requestOptions = {
+            ...options,
+            headers: {
+                authorization: token ? `Token ${token}` : '',
+            }
+        }
         if (!isLoading) {
             return
         }
-        axios(`${API_PATHS.BASE_URL}${url}`, options)
+        axios(`${API_PATHS.BASE_URL}${url}`, requestOptions)
             .then(res => {
                 console.warn('SUCCESS IN THEN: ', res);
                 setIsLoading(false);
@@ -58,9 +66,9 @@ export default (url: string): TUseFetchResult => {
 
     }, [isLoading, url, options])
 
-    const doFetch = (option: IOptions = {}) => {
+    const doFetch = (option?: IOptions) => {
         setIsLoading(true);
-        setOptions(option)
+        option && setOptions(option)
     }
 
     return [
